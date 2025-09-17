@@ -4,7 +4,7 @@ const userRoute = require("./routes/userRoute");
 const uploadRoute = require("./routes/uploadRoutes");
 const tenantRoute = require("./routes/tenantRoute");
 const { logger } = require("./utils/logger");
-const morgan = require("morgan");
+const morgan = require("morgan")
 
 const app = express();
 const cors = require("cors");
