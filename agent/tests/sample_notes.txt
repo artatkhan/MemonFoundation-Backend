@@ -1,0 +1,23 @@
+Sample Notes for Testing Upload
+
+Mathematics:
+- Algebra: Solving linear equations
+- Geometry: Properties of triangles
+- Calculus: Basic differentiation rules
+
+Science:
+- Physics: Newton's laws of motion
+- Chemistry: Periodic table elements
+- Biology: Cell structure and function
+
+History:
+- World War II: Key events and outcomes
+- Industrial Revolution: Technological advancements
+- Ancient Civilizations: Egyptian pyramids
+
+Literature:
+- Shakespeare: Romeo and Juliet themes
+- Poetry: Metaphor and simile usage
+- Novels: Character development techniques
+
+This is a sample text file for testing the upload functionality of the tutor agent API.

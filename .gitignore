@@ -1,0 +1,21 @@
+# Node.js
+portal/node_modules/
+node_modules/
+portal/dist/
+dist/
+portal/.env
+LMS/node_modules/
+LMS/dist/
+LMS/.env
+.env
+
+# Docker
+*.log
+docker-compose.override.yml
+
+# IDE files
+.vscode/
+.idea/
+
+# Neo Plugins
+neo4j_db/
