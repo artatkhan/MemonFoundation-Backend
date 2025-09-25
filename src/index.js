@@ -25,6 +25,6 @@ app.use("/api/tenants", tenantRoute);
 app.listen(8080, () => {
   logger.log({
     level: "info",
-    message: `Backend server is running on port ${8080}`,
+    message: `Backend server is running on port ${3000}`,
   });
 });

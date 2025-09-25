@@ -28,12 +28,30 @@ async function getAllStudentsAPI(req, res) {
   const { status, ...data } = await userService.getAllStudents(req);
   return res.status(status).send(data);
 }
+async function getAllUsersAPI(req, res) {
+  const { status, ...data } = await userService.getAllUsers(req);
+  return res.status(status).send(data);
+}
+
+async function studentsUpdateProfileAPI(req, res) {
+  const { status, ...data } = await userService.studentsUpdate(req);
+  return res.status(status).send(data);
+
+}
+async function getUserByIdAPI(req, res) {
+  const { status, ...data } = await userService.getUserById(req);
+  return res.status(status).send(data);
+}
+
 
 module.exports = {
   createUserAPI,
   updateProfileAPI,
+  getAllUsersAPI,
   getUserDataAPI,
   removeUserAPI,
   createStudentAPI,
   getAllStudentsAPI,
+  studentsUpdateProfileAPI,
+  getUserByIdAPI,
 };
