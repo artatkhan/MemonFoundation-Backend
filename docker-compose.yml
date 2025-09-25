@@ -25,7 +25,7 @@ services:
     depends_on:
       - mongodb
     ports:
-      - ${PORTAL_PORT}:3100
+      - ${PORTAL_PORT}:3000
     networks:
       - tutor-network
   
