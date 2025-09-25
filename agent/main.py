@@ -1,5 +1,4 @@
-import logging
-from fastapi import FastAPI, HTTPException, UploadFile, File, status
+from fastapi import FastAPI, HTTPException, UploadFile, File, status, Form
 from fastapi.middleware.cors import CORSMiddleware
 import os
 from typing import List
@@ -15,6 +14,7 @@ from app.models.models import (
     AddPromptRequest,
 )
 from app.utils.utils import ensure_logs_dir_exists, setup_logging, create_tenant_folders, save_file_with_conflict_resolution, validate_payload
+import json
 
 # Ensure logs directory exists and setup logging
 ensure_logs_dir_exists()
@@ -80,9 +80,6 @@ async def health_check():
         health_status["error"] = str(e)
     
     return health_status
-
-from fastapi import Form
-import json
 
 @app.post("/upload", response_model=UploadResponse)
 async def on(file: UploadFile = File(...), payload: str = Form(...)):
