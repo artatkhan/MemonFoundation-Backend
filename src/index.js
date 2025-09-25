@@ -10,6 +10,7 @@ const app = express();
 const cors = require("cors");
 require("dotenv").config();
 require("./config/database");
+const PORTAL_PORT = process.env.PORTAL_PORT;
 
 app.use(cors());
 app.use(express.json());
@@ -22,9 +23,9 @@ app.use("/api/user", userRoute);
 app.use("/api/upload", uploadRoute);
 app.use("/api/tenants", tenantRoute);
 
-app.listen(8080, () => {
+app.listen(PORTAL_PORT, () => {
   logger.log({
     level: "info",
-    message: `Backend server is running on port ${3000}`,
+    message: `Backend server is running on PORTAL_PORT ${PORTAL_PORT}`,
   });
 });
