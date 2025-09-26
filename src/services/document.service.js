@@ -1,4 +1,5 @@
 const Document = require("../models/Document");
+const User = require("../models/User");
 
 class DocumentService {
     static async createDocument(req) {
@@ -118,6 +119,40 @@ class DocumentService {
             return { status: 200, message: "Document deleted successfully" };
         } catch (error) {
             console.error("Error deleting document:", error);
+            return { status: 500, message: error.message };
+        }
+    }
+
+    static async getTutorDocumentsByTenant(req) {
+        try {
+            const { userId } = req.user;
+
+            // 1. Get student info
+            const student = await User.findById(userId);
+            if (!student || student.type !== "student") {
+                return { status: 403, message: "Access denied: Only students can access this route." };
+            }
+
+            // 2. Find tutor for this tenant
+            const tutor = await User.findOne({
+                tenantId: student.tenantId,
+                type: "tutor",
+            });
+
+            if (!tutor) {
+                return { status: 404, message: "No tutor found for this student's tenant." };
+            }
+
+            // 3. Get documents uploaded by the tutor
+            const documents = await Document.find({ uploadedBy: tutor._id })
+                .populate("documentType", "documentType documentAbbreviation")
+                .populate("uploadedBy", "name email")
+                .populate("createdBy", "name email")
+                .sort({ createdAt: -1 });
+
+            return { status: 200, data: documents };
+        } catch (error) {
+            console.error("Error fetching tutor documents for student:", error);
             return { status: 500, message: error.message };
         }
     }
