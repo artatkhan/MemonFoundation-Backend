@@ -3,7 +3,7 @@ const { verifyTokenAndAdmin } = require('../middlewares/verification');
 const router = require('express').Router();
 
 router.post('/Doc-type', verifyTokenAndAdmin, documentTypeController.createDocumentTypeAPI);
-router.get('/GetAll', verifyTokenAndAdmin, documentTypeController.getAllDocumentTypesAPI);
+router.get('/GetAll', documentTypeController.getAllDocumentTypesAPI);
 router.get('/Doc-type/:id', verifyTokenAndAdmin, documentTypeController.getDocumentTypeByIdAPI);
 router.put('/update/:id', verifyTokenAndAdmin, documentTypeController.updateDocumentTypeAPI);
 router.delete('/delete/:id', verifyTokenAndAdmin, documentTypeController.deleteDocumentTypeAPI);

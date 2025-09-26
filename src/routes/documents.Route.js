@@ -8,4 +8,8 @@ router.get("/GetAll", verifyToken, documentController.getAllDocumentsAPI);
 
 router.get("/GetById/:id", verifyToken, documentController.getDocumentByIdAPI);
 
+router.put("/update/:id", verifyTutor, documentController.updateDocumentAPI);
+
+router.delete("/delete/:id", verifyTutor, documentController.deleteDocumentAPI);
+
 module.exports = router;
