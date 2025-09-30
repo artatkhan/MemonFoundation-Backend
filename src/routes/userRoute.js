@@ -25,6 +25,10 @@ router.get("/Get-all", verifyTokenAndAdmin, userController.getAllUsersAPI);
 
 router.put("/student-update/:id", verifyToken, userController.studentsUpdateProfileAPI);
 
-router.get("/user/:id", verifyToken, userController.getUserByIdAPI);
+router.get("/user/:id", userController.getUserByIdAPI);
+
+router.put("/admin-update/:id", verifyTokenAndAdmin, userController.updateByAdminAPI);
+
+router.delete("/admin-remove/:id", verifyTokenAndAdmin, userController.removeByAdminAPI);
 
 module.exports = router;

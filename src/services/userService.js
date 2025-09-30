@@ -4,56 +4,55 @@ const EmailService = require("./mailerService");
 const bcrypt = require("bcrypt");
 
 class UserService {
- static async createTutor(req) {
-  try {
-    const { name, email, tenantId, username, password } = req.body;
-
-    if (!password) {
-      return { status: 400, message: "Password is required" };
-    }
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return { status: 400, message: "Email already registered" };
-    }
-    const tenant = await Tenant.findById(tenantId);
-    if (!tenant || !tenant.isActive) {
-      return { status: 400, message: "Invalid or inactive tenant" };
-    }
-    const existingTenantUser = await User.findOne({ tenantId });
-    if (existingTenantUser) {
-      return {
-        status: 400,
-        message: "This tenant is already assigned to another user",
-      };
-    }
-
-    // Hash password
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create tutor
-    const user = await User.create({
-      name,
-      email,
-      type: "tutor",
-      tenantId,
-      username,
-      password: hashedPassword,
-    });
-
-    return {
-      status: 201,
-      data: user,
-      message: "Tutor created successfully.",
-    };
-  } catch (error) {
-    return { status: 500, message: error.message };
-  }
-}
-
-  static async  createStudent(req) {
+  static async createTutor(req) {
     try {
-      const { name, email, username, password,tenantId } = req.body;
+      const { name, email, tenantId, username, password } = req.body;
+
+      if (!password) {
+        return { status: 400, message: "Password is required" };
+      }
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return { status: 400, message: "Email already registered" };
+      }
+      const tenant = await Tenant.findById(tenantId);
+      if (!tenant || !tenant.isActive) {
+        return { status: 400, message: "Invalid or inactive tenant" };
+      }
+      const existingTenantUser = await User.findOne({ tenantId });
+      if (existingTenantUser) {
+        return {
+          status: 400,
+          message: "This tenant is already assigned to another user",
+        };
+      }
+
+      // Hash password
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
+
+      // Create tutor
+      const user = await User.create({
+        name,
+        email,
+        type: "tutor",
+        tenantId,
+        username,
+        password: hashedPassword,
+      });
+
+      return {
+        status: 201,
+        data: user,
+        message: "Tutor created successfully.",
+      };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+  static async createStudent(req) {
+    try {
+      const { name, email, username, password, tenantId } = req.body;
       // const { tenantId } = req.user;
 
       if (!password) {
@@ -101,7 +100,7 @@ class UserService {
       return { status: 500, message: error.message };
     }
   }
-static async studentsUpdate(req) {
+  static async studentsUpdate(req) {
     try {
       const { id } = req.params;
       const { name, email, username, password } = req.body;
@@ -122,7 +121,7 @@ static async studentsUpdate(req) {
             email,
             _id: { $ne: id },
           })
-          .lean();
+            .lean();
         if (existingUser) {
           return { status: 400, message: "Email already registered" };
         }
@@ -271,7 +270,7 @@ static async studentsUpdate(req) {
     try {
       const { id } = req.params;
       const user = await User.findById(id).select
-        ("-password").populate('tenantId','name')
+        ("-password").populate('tenantId', 'name')
         .lean();
       if (!user) {
         return { status: 404, message: "User not found" };
@@ -282,6 +281,66 @@ static async studentsUpdate(req) {
       return { status: 500, message: error.message };
     }
   }
+
+  static async updateByAdmin(req) {
+    try {
+      const { id } = req.params;
+      const { name, email, username, type, isActive } = req.body;
+      const user = await User.findById(id);
+      if (!user) {
+        return { status: 404, message: "User not found" };
+      }
+      if (email && email !== user.email) {
+        const existingUser = await
+          User.findOne({
+            email,
+            _id: { $ne: id },
+          })
+            .lean();
+        if (existingUser) {
+          return { status: 400, message: "Email already registered" };
+        }
+        user.email = email;
+      }
+      if (username) {
+        const existingUserName = await User.findOne({
+          username,
+          _id: { $ne: id },
+        }).lean();
+        if (existingUserName) {
+          return { status: 400, message: "This Username is Already Taken" };
+        }
+        user.username = username;
+      }
+      if (name) user.name = name;
+      if (type) user.type = type;
+      if (typeof isActive === "boolean") user.isActive = isActive;
+      await user.save();
+      return { status: 200, data: user, message: "User updated successfully." };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+  static async removeByAdmin(req) {
+    try {
+      const { id } = req.params;
+      const user = await User.findById(id);
+
+      if (!user) {
+        return { status: 404, message: "User not found" };
+      }
+
+      // Mark the user as deleted (soft delete)
+      user.isDeleted = true;
+      await user.save();
+
+      return { status: 200, message: "User removed (soft deleted) successfully." };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
 
 }
 

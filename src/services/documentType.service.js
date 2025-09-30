@@ -24,16 +24,35 @@ class DocumentTypeService {
             return { status: 500, message: error.message };
         }
     }
-
     static async getAllDocumentTypes(req) {
         try {
-            const documentTypes = await DocumentType.find().sort({ createdAt: -1 });
-            return { status: 200, data: documentTypes };
+            const { page = 1, limit = 10 } = req.query;
+            const pageNum = parseInt(page);
+            const limitNum = parseInt(limit);
+            const skip = (pageNum - 1) * limitNum;
+
+            const [documentTypes, total] = await Promise.all([
+                DocumentType.find()
+                    .sort({ createdAt: -1 })
+                    .skip(skip)
+                    .limit(limitNum),
+                DocumentType.countDocuments()
+            ]);
+
+            return {
+                status: 200,
+                data: documentTypes,
+                pagination: {
+                    total,
+                    page: pageNum,
+                    limit: limitNum,
+                    totalPages: Math.ceil(total / limitNum)
+                }
+            };
         } catch (error) {
             return { status: 500, message: error.message };
         }
     }
-
     static async getDocumentTypeById(req) {
         try {
             const { id } = req.params;
@@ -46,7 +65,6 @@ class DocumentTypeService {
             return { status: 500, message: error.message };
         }
     }
-
     static async updateDocumentType(req) {
         try {
             const { id } = req.params;
@@ -68,7 +86,6 @@ class DocumentTypeService {
             return { status: 500, message: error.message };
         }
     }
-
     static async deleteDocumentType(req) {
         try {
             const { id } = req.params;
@@ -76,7 +93,7 @@ class DocumentTypeService {
             if (!documentTypeData) {
                 return { status: 404, message: "Document type not found" };
             }
-            await documentTypeData.remove();
+            await documentTypeData.deleteOne();
             return { status: 200, message: "Document type deleted successfully" };
         } catch (error) {
             return { status: 500, message: error.message };

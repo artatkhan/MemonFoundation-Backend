@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema(
     },
     isActive: {
       type: Boolean,
-      default: true,
+      default: false,
     },
     image: {
       type: String,
@@ -45,6 +45,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       minlength: 6,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
