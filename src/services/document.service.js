@@ -4,7 +4,7 @@ const User = require("../models/User");
 class DocumentService {
     static async createDocument(req) {
         try {
-            const { title, documentType, documnetBrief, documentURL, documentUpload } = req.body;
+            const { title, documentType, documnetBrief, documentURL, documentUpload ,documentPage} = req.body;
             const { userId } = req.user;
 
             const newDocument = new Document({
@@ -12,6 +12,7 @@ class DocumentService {
                 documentType,
                 documnetBrief,
                 documentURL,
+                documentPage,
                 documentUpload,
                 uploadedBy: userId,
                 createdBy: userId

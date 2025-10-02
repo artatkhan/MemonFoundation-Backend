@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    phone:{
+      type:String,
+
+    },
     isEmailValid: {
       type: Boolean,
       default: false,

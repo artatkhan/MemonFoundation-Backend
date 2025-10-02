@@ -28,6 +28,11 @@ async function getAllStudentsAPI(req, res) {
   const { status, ...data } = await userService.getAllStudents(req);
   return res.status(status).send(data);
 }
+
+async function getstudentByAdmin(req, res) {
+  const { status, ...data } = await userService.getStudentsByTenant(req);
+  return res.status(status).send(data);
+}
 async function getAllUsersAPI(req, res) {
   const { status, ...data } = await userService.getAllUsers(req);
   return res.status(status).send(data);
@@ -59,6 +64,7 @@ module.exports = {
   getAllUsersAPI,
   getUserDataAPI,
   removeUserAPI,
+  getstudentByAdmin,
   removeByAdminAPI,
   createStudentAPI,
   updateByAdminAPI,

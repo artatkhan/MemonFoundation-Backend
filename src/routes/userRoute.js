@@ -21,6 +21,9 @@ router.get("/find", verifyToken, userController.getUserDataAPI);
 
 router.get("/students", verifyTutor, userController.getAllStudentsAPI);
 
+router.get("/getStudentByAdmin", verifyTokenAndAdmin, userController.getstudentByAdmin);
+
+
 router.get("/Get-all", verifyTokenAndAdmin, userController.getAllUsersAPI);
 
 router.put("/student-update/:id", verifyToken, userController.studentsUpdateProfileAPI);

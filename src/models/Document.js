@@ -16,6 +16,12 @@ const Document = new mongoose.Schema(
             required: true,
             trim: true,
         },
+        documentPage:{
+            type:String,
+            enum:["Page1","Page2","NA"],
+            default:"NA"
+
+        },
 
        documentURL: {
             type: String,

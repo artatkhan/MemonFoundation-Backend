@@ -2,6 +2,7 @@ const User = require("../models/User");
 const Tenant = require("../models/Tenant");
 const EmailService = require("./mailerService");
 const bcrypt = require("bcrypt");
+const { Types } = require("mongoose");
 
 class UserService {
   static async createTutor(req) {
@@ -52,7 +53,7 @@ class UserService {
   }
   static async createStudent(req) {
     try {
-      const { name, email, username, password, tenantId } = req.body;
+      const { name, email, username, password, tenantId, phone } = req.body;
       // const { tenantId } = req.user;
 
       if (!password) {
@@ -82,6 +83,7 @@ class UserService {
         email,
         type: "student",
         tenantId,
+        phone,
         username,
         password: hashedPassword,
       });
@@ -239,7 +241,7 @@ class UserService {
       const filter = {
         tenantId,
         type: "student",
-        isActive: true,
+        isActive: false,
       };
       const total = await User.countDocuments(filter);
       const students = await User.find(filter)
@@ -265,6 +267,50 @@ class UserService {
       return { status: 500, message: error.message };
     }
   }
+  static async getStudentsByTenant(req) {
+    try {
+      const { tenantId } = req.query; // ✅ from query, not params
+      const { page = 1, limit = 10 } = req.query;
+
+      if (!tenantId || !Types.ObjectId.isValid(tenantId)) {
+        return { status: 400, message: "Invalid or missing tenantId" };
+      }
+
+      const pageNum = parseInt(page);
+      const limitNum = parseInt(limit);
+      const skip = (pageNum - 1) * limitNum;
+
+      const filter = {
+        tenantId: new Types.ObjectId(tenantId), // ✅ convert to ObjectId
+        type: "student",
+        isDeleted: false, // ✅ make sure to exclude deleted users
+      };
+
+      const total = await User.countDocuments(filter);
+      const students = await User.find(filter)
+        .select("-password")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(limitNum)
+        .lean();
+
+      return {
+        status: 200,
+        data: {
+          students,
+          pagination: {
+            total,
+            page: pageNum,
+            limit: limitNum,
+            pages: Math.ceil(total / limitNum),
+          },
+        },
+      };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
 
   static async getUserById(req) {
     try {
@@ -340,8 +386,6 @@ class UserService {
       return { status: 500, message: error.message };
     }
   }
-
-
 }
 
 module.exports = UserService;

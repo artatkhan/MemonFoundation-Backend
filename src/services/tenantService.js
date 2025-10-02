@@ -39,14 +39,14 @@ class TenantService {
       const [tenants, total] = await Promise.all([
         Tenant.find({
           createdBy: userId,
-          isActive: true,
+          isDeleted:false
         })
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limitNum),
         Tenant.countDocuments({
           createdBy: userId,
-          isActive: true,
+          isDeleted:false
         }),
       ]);
 

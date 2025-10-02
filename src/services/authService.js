@@ -70,7 +70,7 @@ class AuthService {
 
       if (!user) return { status: 400, message: "Invalid email or password" };
       if (user.isActive === false)
-        return { status: 400, message: "User Has Been Removed" };
+        return { status: 400, message: "you Are inactive" };
 
       // Verify password
       const isValidPassword = await bcrypt.compare(password, user.password);
