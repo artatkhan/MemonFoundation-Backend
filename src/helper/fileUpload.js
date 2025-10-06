@@ -3,7 +3,8 @@ import fs from 'fs';
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import multer from 'multer';
 import path from 'path';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
+import { apiResponse } from '../types/res'
 
 dotenv.config({ path: '../.env' });
 
@@ -38,9 +39,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 100 * 1024 * 1024 }, // 100 MB
+    limits: { fileSize: 100 * 1024 * 1024 } // 100 MB
 });
-
 const uploadFileToS3 = async (file) => {
     try {
         const fileStream = fs.createReadStream(file.path);
@@ -56,6 +56,7 @@ const uploadFileToS3 = async (file) => {
         fs.unlink(file.path, (err) => {
             if (err) {
                 console.error(`Error deleting file: ${err}`);
+            } else {
             }
         });
 
@@ -66,7 +67,10 @@ const uploadFileToS3 = async (file) => {
 };
 
 const fileUpload = async (req) => {
-    const uploadResult = await new Promise((resolve, reject) => {
+    const uploadResult = await new Promise < {
+        s3UploadResult
+
+    } > ((resolve, reject) => {
         upload.single('documentFile')(req, {}, (err) => {
             if (err) reject({ status: 400, message: err.message });
             resolve({ status: 200, s3UploadResult: null });
@@ -77,7 +81,7 @@ const fileUpload = async (req) => {
         return uploadResult;
     }
 
-    const uploadedFile = req.file;
+    const uploadedFile = req?.file;
     const s3UploadResult = await uploadFileToS3(uploadedFile);
     if (!s3UploadResult || s3UploadResult.message.includes('failed')) {
         return { status: 500, message: 'Error Uploading File' };

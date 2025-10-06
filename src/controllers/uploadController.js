@@ -1,10 +1,10 @@
-const UploadService = require("../services/uploadService");
+import { UploadService } from '../services/uploadService.js';
 
-async function addImages(req, res) {
-  const { status, ...data } = await UploadService.uploadImages(req);
-  return res.status(status).send(data);
+export async function uploadFile(req, res) {
+    try {
+        const result = await UploadService.uploadFile(req);
+        return res.status(result.status).send(result);
+    } catch (error) {
+        return res.status(500).send({ error: error.message });
+    }
 }
-
-module.exports = {
-  addImages,
-};

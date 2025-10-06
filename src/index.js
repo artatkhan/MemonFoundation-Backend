@@ -22,7 +22,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/uploads", express.static("uploads"));
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
-app.use("/api/upload", uploadRoute);
 app.use("/api/tenants", tenantRoute);
 app.use("/api/upload", uploadRoute);
 app.use("/api/document-types", documentTypeRoute);
