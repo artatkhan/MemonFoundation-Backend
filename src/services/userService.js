@@ -241,7 +241,6 @@ class UserService {
       const filter = {
         tenantId,
         type: "student",
-        isActive: true,
       };
       const total = await User.countDocuments(filter);
       const students = await User.find(filter)
