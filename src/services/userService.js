@@ -212,9 +212,17 @@ class UserService {
 
       let users;
       if (type === "admin") {
-        users = (await User.find({ type: "tutor" }).lean().populate('createdBy', 'name')).populate('tenantId', 'name').populate('updatedBy', 'name');
+        users = await User.find({ type: "tutor" })
+          .populate('createdBy', 'name')
+          .populate('tenantId', 'name')
+          .populate('updatedBy', 'name')
+          .lean(); // Move lean() to the end
       } else {
-        users = await User.findById(userId).lean();
+        users = await User.findById(userId)
+          .populate('createdBy', 'name')
+          .populate('tenantId', 'name')
+          .populate('updatedBy', 'name')
+          .lean();
         if (!users) {
           return { status: 400, message: "User not found" };
         }
