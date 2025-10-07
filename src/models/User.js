@@ -57,7 +57,7 @@ const UserSchema = new mongoose.Schema(
     createBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+  
     },
     updatedBy: {
       type: mongoose.Schema.Types.ObjectId,

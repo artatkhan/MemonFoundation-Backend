@@ -36,7 +36,7 @@ class UserService {
       // Create tutor
       const user = await User.create({
         name,
-        createBy: userId,
+        createdBy: userId,
         email,
         type: "tutor",
         tenantId,
