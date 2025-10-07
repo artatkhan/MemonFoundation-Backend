@@ -43,7 +43,7 @@ class TenantService {
         })
           .sort({ createdAt: -1 })
           .skip(skip)
-          .limit(limitNum),
+          .limit(limitNum).populate('createdBy', 'name'),
         Tenant.countDocuments({
           createdBy: userId,
           isDeleted:false
@@ -101,7 +101,7 @@ class TenantService {
       }
 
       const tenant = await Tenant.findOneAndUpdate(
-        { _id: id, createdBy: userId },
+        { _id: id, updatedBy: userId },
         { $set: updateData },
         { new: true }
       );

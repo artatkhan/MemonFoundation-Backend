@@ -37,8 +37,8 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    phone:{
-      type:String,
+    phone: {
+      type: String,
 
     },
     isEmailValid: {
@@ -53,6 +53,15 @@ const UserSchema = new mongoose.Schema(
     isDeleted: {
       type: Boolean,
       default: false,
+    },
+    createBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    updatedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }

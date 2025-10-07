@@ -57,11 +57,17 @@ async function removeByAdminAPI(req, res) {
   return res.status(status).send(data);
 }
 
+async function updateStudentStatusAPI(req, res) {
+  const { status, ...data } = await userService.updateStudentStatus(req);
+  return res.status(status).send(data);
+}
+
 
 module.exports = {
   createUserAPI,
   updateProfileAPI,
   getAllUsersAPI,
+  updateStudentStatusAPI,
   getUserDataAPI,
   removeUserAPI,
   getstudentByAdmin,

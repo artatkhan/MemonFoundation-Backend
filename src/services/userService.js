@@ -7,6 +7,7 @@ const { Types } = require("mongoose");
 class UserService {
   static async createTutor(req) {
     try {
+      const { userId } = req.user;
       const { name, email, tenantId, username, password } = req.body;
 
       if (!password) {
@@ -35,6 +36,7 @@ class UserService {
       // Create tutor
       const user = await User.create({
         name,
+        createBy: userId,
         email,
         type: "tutor",
         tenantId,
@@ -106,13 +108,6 @@ class UserService {
     try {
       const { id } = req.params;
       const { name, email, username, password } = req.body;
-      // const { tenantId } = req.user;
-      // if (!tenantId) {
-      //   return {
-      //     status: 400,
-      //     message: "TenantId is required to update a student",
-      //   };
-      // }
       const student = await User.findOne({ _id: id, type: "student" });
       if (!student) {
         return { status: 404, message: "Student not found" };
@@ -150,7 +145,6 @@ class UserService {
       return { status: 500, message: error.message };
     }
   }
-
   static async updateProfile(req) {
     try {
       const { name, username, image } = req.body;
@@ -204,7 +198,7 @@ class UserService {
   static async getUserData(req) {
     try {
       const { userId } = req.user;
-      const userData = await User.findById(userId).lean();
+      const userData = await User.findById(userId).lean().populate('createdBy', 'name');
       if (!userData)
         return { status: 400, message: "Unable to fetch User's Data" };
       return { status: 200, data: userData };
@@ -218,7 +212,7 @@ class UserService {
 
       let users;
       if (type === "admin") {
-        users = await User.find({ type: "tutor" }).lean();
+        users = (await User.find({ type: "tutor" }).lean().populate('createdBy', 'name')).populate('tenantId', 'name').populate('updatedBy', 'name');
       } else {
         users = await User.findById(userId).lean();
         if (!users) {
@@ -382,6 +376,60 @@ class UserService {
 
       return { status: 200, message: "User removed (soft deleted) successfully." };
     } catch (error) {
+      return { status: 500, message: error.message };
+    }
+  }
+
+
+  static async updateStudentStatus(req) {
+    try {
+      const { tenantId, type: userType } = req.user;
+      const { studentId } = req.params; // Change from req.params to req.query
+      const { isActive } = req.body;
+
+      console.log('Tutor:', req.user._id);
+      console.log('Student ID:', studentId);
+      console.log('Tenant ID:', tenantId);
+
+      // Check if user is tutor
+      if (userType !== 'tutor') {
+        return { status: 403, message: 'Only tutors can update student status' };
+      }
+
+      // Validate studentId
+      if (!studentId) {
+        return { status: 400, message: 'Student ID is required' };
+      }
+
+      // Find student and verify tenant match
+      const student = await User.findOne({
+        _id: studentId,
+        tenantId, // Make sure tenantId matches
+        type: 'student'
+      });
+
+      console.log('Found student:', student);
+
+      if (!student) {
+        return { status: 404, message: 'Student not found' };
+      }
+
+      // Update active status
+      student.isActive = isActive;
+      await student.save();
+
+      return {
+        status: 200,
+        message: `Student ${isActive ? 'activated' : 'deactivated'} successfully`,
+        data: {
+          studentId: student._id,
+          name: student.name,
+          email: student.email,
+          isActive: student.isActive
+        }
+      };
+    } catch (error) {
+      console.error('Error in updateStudentStatusAPI:', error);
       return { status: 500, message: error.message };
     }
   }

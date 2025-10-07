@@ -34,4 +34,8 @@ router.put("/admin-update/:id", verifyTokenAndAdmin, userController.updateByAdmi
 
 router.delete("/admin-remove/:id", verifyTokenAndAdmin, userController.removeByAdminAPI);
 
+router.put("/update-student-status/:studentId", verifyTutor, userController.updateStudentStatusAPI);
+
+
+
 module.exports = router;
