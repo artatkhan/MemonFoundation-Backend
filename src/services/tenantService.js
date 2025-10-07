@@ -39,14 +39,14 @@ class TenantService {
       const [tenants, total] = await Promise.all([
         Tenant.find({
           createdBy: userId,
-          isDeleted:false
+          isDeleted: false
         })
           .sort({ createdAt: -1 })
           .skip(skip)
           .limit(limitNum).populate('createdBy', 'name'),
         Tenant.countDocuments({
           createdBy: userId,
-          isDeleted:false
+          isDeleted: false
         }),
       ]);
 
@@ -81,17 +81,20 @@ class TenantService {
     }
   }
 
- static async updateTenant(req) {
+  static async updateTenant(req) {
     try {
       const { id } = req.params;
-      const { tenantId } = req.user; // Using tenantId instead of userId
+      const { tenantId, userId } = req.user; // Get userId for updatedBy
       const updateData = req.body;
+
+      // Add updatedBy field
+      updateData.updatedBy = userId;
 
       if (updateData.email) {
         const existingTenant = await Tenant.findOne({
           email: updateData.email,
           _id: { $ne: id },
-          tenantId: tenantId, // Check within same tenant/organization
+          tenantId: tenantId,
         });
         if (existingTenant) {
           return {
@@ -102,13 +105,13 @@ class TenantService {
       }
 
       const tenant = await Tenant.findOneAndUpdate(
-        { 
-          _id: id, 
-          tenantId: tenantId // Update based on tenantId, not userId
+        {
+          _id: id,
+          tenantId: tenantId
         },
         { $set: updateData },
         { new: true }
-      );
+      ).populate('updatedBy', 'name email'); // Populate updatedBy field
 
       if (!tenant) {
         return { status: 404, message: "Tenant not found" };
@@ -119,24 +122,23 @@ class TenantService {
       return { status: 500, message: error.message };
     }
   }
-
   static async deleteTenant(req) {
-     try {
-         const { id } = req.params;
-         const user = await Tenant.findById(id);
-   
-         if (!user) {
-           return { status: 404, message: "Tenant not found" };
-         }
-   
-         // Mark the user as deleted (soft delete)
-         user.isDeleted = true;
-         await user.save();
-   
-         return { status: 200, message: "Tenant removed (soft deleted) successfully." };
-       } catch (error) {
-         return { status: 500, message: error.message };
-       }
+    try {
+      const { id } = req.params;
+      const user = await Tenant.findById(id);
+
+      if (!user) {
+        return { status: 404, message: "Tenant not found" };
+      }
+
+      // Mark the user as deleted (soft delete)
+      user.isDeleted = true;
+      await user.save();
+
+      return { status: 200, message: "Tenant removed (soft deleted) successfully." };
+    } catch (error) {
+      return { status: 500, message: error.message };
+    }
   }
 }
 
