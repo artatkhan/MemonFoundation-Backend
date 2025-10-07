@@ -54,7 +54,7 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    createBy: {
+    createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
   
