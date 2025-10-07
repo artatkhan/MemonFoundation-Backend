@@ -81,16 +81,17 @@ class TenantService {
     }
   }
 
-  static async updateTenant(req) {
+ static async updateTenant(req) {
     try {
       const { id } = req.params;
-      const { userId } = req.user;
+      const { tenantId } = req.user; // Using tenantId instead of userId
       const updateData = req.body;
 
       if (updateData.email) {
         const existingTenant = await Tenant.findOne({
           email: updateData.email,
           _id: { $ne: id },
+          tenantId: tenantId, // Check within same tenant/organization
         });
         if (existingTenant) {
           return {
@@ -101,7 +102,10 @@ class TenantService {
       }
 
       const tenant = await Tenant.findOneAndUpdate(
-        { _id: id, updatedBy: userId },
+        { 
+          _id: id, 
+          tenantId: tenantId // Update based on tenantId, not userId
+        },
         { $set: updateData },
         { new: true }
       );
