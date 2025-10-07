@@ -43,7 +43,7 @@ class TenantService {
         })
           .sort({ createdAt: -1 })
           .skip(skip)
-          .limit(limitNum).populate('createdBy', 'name'),
+          .limit(limitNum).populate('createdBy', 'name').populate('updatedBy', 'name'),
         Tenant.countDocuments({
           createdBy: userId,
           isDeleted: false
