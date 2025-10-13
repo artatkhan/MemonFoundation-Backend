@@ -15,6 +15,100 @@ const transporter = nodemailer.createTransport({
 });
 
 class EmailService {
+
+  static async sendPasswordSetupEmail(email, name, setupLink) {
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Set Your Password - Welcome to the Memon Foundation",
+      html: `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f6f8;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          max-width: 600px;
+          margin: 30px auto;
+          background-color: #ffffff;
+          padding: 30px;
+          border-radius: 10px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+          text-align: center;
+          padding-bottom: 20px;
+        }
+        .header h2 {
+          color: #004c99;
+          margin: 0;
+        }
+        .content p {
+          font-size: 16px;
+          color: #333333;
+          line-height: 1.6;
+        }
+        .btn {
+          display: inline-block;
+          padding: 12px 25px;
+          margin-top: 20px;
+          background-color: #004c99;
+          color: #ffffff !important;
+          text-decoration: none;
+          border-radius: 5px;
+          font-weight: bold;
+        }
+        .footer {
+          margin-top: 30px;
+          font-size: 14px;
+          color: #777777;
+          text-align: center;
+        }
+        a {
+          color: #004c99;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="container">
+        <div class="header">
+          <h2>Welcome to the Memon Foundation</h2>
+        </div>
+        <div class="content">
+          <p>Hi <strong>${name}</strong>,</p>
+          <p>You have been registered as a student. To activate your account, please click the button below to set your password:</p>
+          <p style="text-align: center;">
+            <a class="btn" href="${setupLink}" target="_blank">Set Your Password</a>
+          </p>
+          <p>This link will expire in <strong>1 hour</strong> for security purposes.</p>
+          <p>If you did not request this, please ignore this email or contact support.</p>
+        </div>
+        <div class="footer">
+          <p>Regards,<br/>The Memon Foundation Support Team</p>
+        </div>
+      </div>
+    </body>
+  </html>
+  `,
+    };
+
+
+    try {
+      await transporter.sendMail(mailOptions);
+      logger.info(`Password setup link sent to ${email}`);
+      return { status: 200, message: "Password setup email sent successfully." };
+    } catch (error) {
+      logger.error("Failed to send password setup email:", error);
+      return { status: 500, message: StaticError.THIRD_PARTY_ERROR };
+    }
+  }
+
+
   static generateOTP() {
     return Math.floor(100000 + Math.random() * 900000).toString();
   }
@@ -30,9 +124,8 @@ class EmailService {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Your OTP Code",
-      text: `Your OTP code is ${otp}. It will expire in ${
-        process.env.OTP_EXPIRY_MINUTES || 5
-      } minutes.`,
+      text: `Your OTP code is ${otp}. It will expire in ${process.env.OTP_EXPIRY_MINUTES || 5
+        } minutes.`,
     };
 
     try {

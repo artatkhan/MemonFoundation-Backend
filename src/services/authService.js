@@ -79,8 +79,14 @@ class AuthService {
       }
 
       const secret = process.env.JWT_SECRET;
-      const token = await jsonWeb(user, secret);
-      await user.save();
+      const token = jwt.sign(
+        {
+          _id: user._id,
+          type: user.type, // make sure user has a 'type' field like 'student', 'admin', etc.
+        },
+        secret,
+        { expiresIn: "1d" }
+      );      await user.save();
 
       return {
         status: 200,

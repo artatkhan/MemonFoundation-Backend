@@ -93,7 +93,7 @@ class DocumentTypeService {
             if (!documentTypeData) {
                 return { status: 404, message: "Document type not found" };
             }
-            await documentTypeData.deleteOne();
+            await documentTypeData.deleteOne(); 
             return { status: 200, message: "Document type deleted successfully" };
         } catch (error) {
             return { status: 500, message: error.message };

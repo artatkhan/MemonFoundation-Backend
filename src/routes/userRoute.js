@@ -23,7 +23,6 @@ router.get("/students", verifyTutor, userController.getAllStudentsAPI);
 
 router.get("/getStudentByAdmin", verifyTokenAndAdmin, userController.getstudentByAdmin);
 
-
 router.get("/Get-all", verifyTokenAndAdmin, userController.getAllUsersAPI);
 
 router.put("/student-update/:id", verifyToken, userController.studentsUpdateProfileAPI);
@@ -34,8 +33,10 @@ router.put("/admin-update/:id", verifyTokenAndAdmin, userController.updateByAdmi
 
 router.delete("/admin-remove/:id", verifyTokenAndAdmin, userController.removeByAdminAPI);
 
-router.put("/update-student-status/:studentId", verifyTutor, userController.updateStudentStatusAPI);
+router.put("/update-student-status/:studentId",verifyTokenAndAdmin, userController.updateStudentStatusAPI);
 
+router.post("/send-password-setup-link", userController.sendPasswordSetupLinkAPI);
 
+router.post("/set-password", userController.setPasswordAPI);
 
 module.exports = router;

@@ -48,7 +48,7 @@ const verifyTutor = (req, res, next) => {
 const verifyTokenAndAdmin = (req, res, next) => {
   try {
     verifyToken(req, res, () => {
-      if (req.user.type === "admin") {
+      if (req.user.type === "superadmin") {
         next();
       } else {
         return res

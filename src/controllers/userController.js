@@ -62,9 +62,22 @@ async function updateStudentStatusAPI(req, res) {
   return res.status(status).send(data);
 }
 
+async function sendPasswordSetupLinkAPI(req, res) {
+  const { status, ...data } = await userService.sendPasswordSetupLink(req);
+  return res.status(status).send(data);
+}
+
+
+async function setPasswordAPI(req, res) {
+  const { status, ...data } = await userService.setPassword(req);
+  return res.status(status).send(data);
+}
+
 
 module.exports = {
   createUserAPI,
+  setPasswordAPI,
+  sendPasswordSetupLinkAPI,
   updateProfileAPI,
   getAllUsersAPI,
   updateStudentStatusAPI,
