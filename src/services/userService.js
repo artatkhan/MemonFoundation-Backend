@@ -163,7 +163,6 @@ class UserService {
       return { status: 500, message: error.message };
     }
   }
-
   static async setPassword(req) {
     try {
       const { token, newPassword } = req.body;
@@ -191,7 +190,6 @@ class UserService {
       return { status: 500, message: "Invalid or expired token." };
     }
   }
-
   static async studentsUpdate(req) {
     try {
       const { id } = req.params;

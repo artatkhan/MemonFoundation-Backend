@@ -29,9 +29,9 @@ app.use("/api/document-types", documentTypeRoute);
 app.use("/api/documents", documentRoute);
 app.use("/api/student-email", studentSendEmailRoute);
 
-app.listen(PORTAL_PORT, () => {
-  logger.log({
-    level: "info",
-    message: `Backend server is running on PORTAL_PORT ${PORTAL_PORT}`,
-  });
+// index.js or api/index.js
+app.get("/", (req, res) => {
+  res.send("Express API is running on Vercel!");
 });
+
+module.exports = app;
