@@ -200,6 +200,7 @@ const UserSchema = new mongoose.Schema(
           "The Pakistan Memon Educational & Welfare Society (Sir Adamjee Institute)",
           "Other"
         ],
+        default: "Other",
       },
 
       memfOffice: {
@@ -209,14 +210,27 @@ const UserSchema = new mongoose.Schema(
         decision: {
           type: String,
           enum: ["Approve", "Hold", "Regret"],
+          default: "Hold",
         },
         category: {
           type: String,
           enum: ["STAR", "HOPE", "SEED"],
+          default: "SEED",
         },
         scholarship: {
           grantedFor: [{ type: String }], // E.g. ["Monthly Fee", "Books"]
           totalAmount: { type: Number },
+          installments: [
+            {
+              month: String,
+              amount: Number,
+              status: {
+                type: String,
+                enum: ['paid', 'unpaid'],
+                default: 'unpaid',
+              }
+            }
+          ],
         },
         panelComments: { type: String },
         reviewPanelSignature: {

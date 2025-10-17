@@ -394,7 +394,7 @@ class UserService {
     try {
       const { id } = req.params;
       const user = await User.findById(id).select
-        ("-password").populate('tenantId', 'name')
+        ("-password")
         .lean();
       if (!user) {
         return { status: 404, message: "User not found" };
